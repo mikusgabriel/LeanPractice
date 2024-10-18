@@ -3,16 +3,85 @@ import Mathlib.Tactic.Ring
 variable (p q r : Prop)
 
 theorem tiers_exclu : p ∨ ¬p := by
-  sorry
+  by_cases hp: p
+  . left 
+    apply hp
+  . right
+    apply hp
 
 theorem imp_exp : ((p ∧ q) → r) ↔ (p → q → r) := by
-  sorry
+  apply Iff.intro
+  case mp => 
+    intro hpqr
+    intro hp
+    intro hq
+    apply hpqr
+    apply And.intro
+    . apply hp
+    . apply hq
+    
 
+  case mpr =>
+    intro hpqr
+    intro hp_q
+    have hp := hp_q.left
+    have hq := hp_q.right
+    apply hpqr
+    apply hp
+    apply hq
+
+    -- autre facon (par modus ponens)
+    -- have hqr := (hpqr hp)
+    -- have hr := (hqr hq)
+    -- apply hr
+    
+
+  
 theorem not_not_elim : ¬¬p ↔ p := by
-  sorry
+  apply Iff.intro
+  
+  case mp =>
+   intro hnotnotp
+   by_cases hp : p
+   case pos => 
+    apply hp
+
+   case neg =>
+    exfalso
+    apply hnotnotp
+    apply hp
+    
+  case mpr =>
+    intro hp
+    intro hnotp
+    apply hnotp
+    apply hp
+
 
 theorem contrapose : (p → q) ↔ (¬q → ¬p) := by
-  sorry
+  apply Iff.intro
+
+  case mp =>
+    intro hpq
+    intro hnotq
+    intro hp
+    have hq := (hpq hp)
+    apply hnotq -- car -q cest comme -q -> false
+    apply hq
+
+  case mpr =>
+    intro hnot_q_not_p
+    intro hp
+    rewrite [<- not_not_elim q]
+    
+    intro hnot_q
+    have hnot_p := (hnot_q_not_p hnot_q)
+    apply hnot_p
+    apply hp
+
+    
+
+
 
 theorem or_elim : p ∨ q → ¬p → q := by
   sorry
@@ -24,15 +93,49 @@ variable (A B : Type _)
 variable (P : A → B → Prop)
 
 theorem exchange_forall : (∀ (x : A), ∀ (y : B), (P x y)) → (∀ (y : B), ∀ (x : A), (P x y)) := by
-  sorry
+  intro hall_px
+  intro y
+  intro x
+  apply hall_px
 
+  -- fonctionne aussi
+  -- have hpxy := (hall_px x y)
+  -- apply hall_px
+  
+
+ 
 theorem exchange_exists : (∃ (x : A), ∃ (y : B), (P x y)) → (∃ (y : B), ∃ (x : A), (P x y)) := by
-  sorry
+  intro hexists_px
+  have ⟨x,hx⟩  := hexists_px
+  have ⟨y,hy⟩ := hx
+  apply Exists.intro y
+  apply Exists.intro x
+  apply hy
+
 
 variable (P : A → Prop)
 
 theorem not_exists_forall : ¬(∃ (x : A), P x) ↔ (∀ (x : A), ¬(P x)) := by
-  sorry
+  apply Iff.intro
+
+  case mp =>
+    intro hnot_exists_px
+    intro x
+    intro hp_x
+    apply hnot_exists_px
+
+    apply Exists.intro x
+    apply hp_x
+
+  case mpr =>
+    intro hall_not_px
+    intro hexists_px
+    have ⟨x,hpx⟩ := hexists_px
+    have not_px := (hall_not_px x)
+    apply not_px
+    apply hpx
+    
+
 
 theorem not_forall_exists : ¬(∀ (x : A), P x) ↔ (∃ (x : A), ¬(P x)) := by
   sorry
