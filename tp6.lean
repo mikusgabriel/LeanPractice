@@ -83,10 +83,34 @@ theorem contrapose : (p → q) ↔ (¬q → ¬p) := by
 
 
 
-theorem or_elim : p ∨ q → ¬p → q := by
-  sorry
+theorem or_elim : (p ∨ q) → ¬p → q := by
+  intro hp_or_q
+  apply (Or.elim hp_or_q)
+  case left =>
+    intro hp
+    intro hnotp
+    exfalso
+    apply hnotp
+    apply hp
+
+  case right =>
+    intro hq
+    intro hnotp
+    apply hq
+
+
 
 theorem distr_or : (p ∧ q) ∨ r <-> (p ∨ r) ∧ (q ∨ r) := by
+  apply Iff.intro
+
+  case mp =>
+    intro hp_and_q_or_r
+    apply And.intro
+    case left =>
+      
+
+      
+
   sorry
 
 variable (A B : Type _)
